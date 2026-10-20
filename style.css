@@ -24,7 +24,7 @@ body { margin: 0; background-color: #c0c0c0; }
 .journal-app {
   color-scheme: only light;
   color: #453a32;
-  background-color: #fff;
+  background-color: #c0c0c0;
   min-height: 100vh;
   border-top: 5px solid #805a3e;
   font-family: system-ui, -apple-system, "Noto Sans JP", sans-serif;
