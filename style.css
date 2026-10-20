@@ -17,7 +17,7 @@
 }
 /* 幅の計算に余白・枠線を含め、入力欄などが枠からはみ出しにくくします。 */
 * { box-sizing: border-box; }
-body { margin: 0; background-color: #fff; }
+body { margin: 0; background-color: #c0c0c0; }
 /* アプリ全体の囲み。埋め込み先に左右されないよう白背景・文字色を再指定。
    配色を変えるときは :root とここの変数を両方変更してください。
    一番上の茶色い線は border-top。ここは色コードを直接指定しています。 */
