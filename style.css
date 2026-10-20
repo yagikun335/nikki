@@ -1,0 +1,75 @@
+:root {
+  color-scheme: only light;
+  font-family: system-ui, -apple-system, "Noto Sans JP", sans-serif;
+  color: #453a32;
+  background: #fff;
+  line-height: 1.7;
+  --wood: #805a3e;
+  --muted: #786a5e;
+  --line: #e7ddd3;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background-color: #fff; }
+.journal-app {
+  color-scheme: only light;
+  color: #453a32;
+  background-color: #fff;
+  min-height: 100vh;
+  border-top: 5px solid #805a3e;
+  font-family: system-ui, -apple-system, "Noto Sans JP", sans-serif;
+  line-height: 1.7;
+  --wood: #805a3e;
+  --muted: #786a5e;
+  --line: #e7ddd3;
+}
+header, main, footer { max-width: 1080px; margin: auto; padding: 32px 24px; }
+header { padding-top: 52px; padding-bottom: 28px; position: relative; }
+header::after { content: ""; display: block; height: 1px; margin-top: 30px; background: linear-gradient(to right, var(--wood) 64px, var(--line) 64px); }
+h1 { font-family: "Yu Mincho", "Hiragino Mincho ProN", serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 600; margin: 0; letter-spacing: .1em; }
+h2 { font-size: 1.15rem; margin: 0 0 20px; font-weight: 600; }
+header p { color: var(--muted); }
+.eyebrow { color: var(--wood); font-size: .75rem; letter-spacing: .25em; font-weight: 700; }
+main { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+.editor, article { background: #fff; padding: 28px; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 5px 20px #63432906; }
+.editor { border-top: 3px solid var(--wood); }
+.editor h2 { padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+label { display: block; font-size: .875rem; margin: 16px 0 6px; font-weight: 600; }
+input, textarea, button { font: inherit; }
+input, textarea { width: 100%; border: 1px solid #b6a28e; border-radius: 6px; padding: 10px 12px; color: inherit; background-color: #fff; }
+input::placeholder, textarea::placeholder { color: #88786b; opacity: 1; }
+textarea {
+  resize: vertical;
+  min-height: 192px;
+  line-height: 32px;
+  padding: 8px 12px;
+  background-image: linear-gradient(to bottom, transparent 31px, var(--line) 31px);
+  background-size: 100% 32px;
+  background-position: 0 8px;
+  background-attachment: local;
+}
+:focus-visible { outline: 3px solid #a87c56; outline-offset: 3px; }
+button { cursor: pointer; border: 1px solid var(--wood); border-radius: 6px; background: var(--wood); color: white; padding: 10px 18px; transition: background-color .15s; }
+button:hover { background: #67452e; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+.secondary { color: var(--wood); background: white; }
+.secondary:hover { background: #f6f0e9; }
+.danger { color: #923d36; border-color: #bd8c80; background: white; }
+.danger:hover { background: #fff2ef; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.note, footer { font-size: .8rem; color: var(--muted); }
+.note { margin-bottom: 0; padding-top: 16px; border-top: 1px solid var(--line); }
+.list-heading { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--line); }
+.list-heading h2 { margin-bottom: 16px; }
+#count, time { font-size: .85rem; color: var(--muted); }
+#count { background: #f5efe8; padding: 2px 10px; border-radius: 20px; }
+article { margin-top: 18px; border-left: 3px solid #b78d67; }
+article h3 { margin: 8px 0; overflow-wrap: anywhere; }
+article p { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 2; padding-top: 12px; border-top: 1px solid var(--line); }
+article .actions { padding-top: 16px; border-top: 1px solid var(--line); }
+#status { min-height: 1.7em; }
+.empty { text-align: center; padding: 40px 12px; color: var(--muted); border-block: 1px dashed var(--line); }
+footer { text-align: center; padding-bottom: 40px; }
+dialog { max-width: min(420px, calc(100% - 32px)); padding: 24px; border: 1px solid #b6a28e; border-radius: 10px; background: #fff; color: #453a32; }
+dialog::backdrop { background: #30251b66; }
+#storage-notice { color: #70431d; background: #fff8ed; padding: 12px; border: 1px solid #d9bc96; border-radius: 6px; }
+@media (max-width: 740px) { main { grid-template-columns: 1fr; gap: 32px; } header { padding-top: 32px; } .editor, article { padding: 20px; } }

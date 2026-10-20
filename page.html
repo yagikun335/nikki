@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>日々のノート</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.mjs"></script>
+</head>
+<body>
+  <div class="journal-app">
+  <header><p class="eyebrow">MY JOURNAL</p><h1>日々のノート</h1><p>今日のできごとを、少しだけ。</p></header>
+  <main>
+    <section class="editor" aria-labelledby="editor-heading">
+      <h2 id="editor-heading">日記を書く</h2>
+      <form id="entry-form">
+        <label for="date">日付</label><input id="date" type="date" required>
+        <label for="title">タイトル</label><input id="title" maxlength="120" placeholder="今日はどんな一日でしたか？" required>
+        <label for="body">本文</label><textarea id="body" rows="10" maxlength="20000" placeholder="思いつくままに書いてみましょう。" required></textarea>
+        <div class="actions"><button id="save" type="button">日記を保存</button><button id="cancel" type="button" class="secondary" hidden>編集をやめる</button></div>
+      </form>
+      <p class="note">日記はこのブラウザに保存されます。別の端末との同期はありません。ブラウザのデータを消すと日記も削除されます。</p>
+      <p id="storage-notice" class="note" role="status" hidden></p>
+    </section>
+    <section aria-labelledby="list-heading">
+      <div class="list-heading"><h2 id="list-heading">これまでの日記</h2><span id="count"></span></div>
+      <label for="search">日記を検索</label><input id="search" type="search" placeholder="タイトルや本文で検索">
+      <p id="status" role="status" aria-live="polite"></p>
+      <div id="entries"></div>
+    </section>
+  </main>
+  <footer>何気ない一日も、大切な記録。</footer>
+  <dialog id="confirmation" aria-labelledby="confirmation-message">
+    <p id="confirmation-message"></p>
+    <div class="actions">
+      <button type="button" data-decision="cancel" class="secondary" autofocus>やめる</button>
+      <button type="button" data-decision="confirm">続ける</button>
+    </div>
+  </dialog>
+  </div>
+</body>
+</html>

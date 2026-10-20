@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>日々のノート</title>
+  <style>
+:root {
+  color-scheme: only light;
+  font-family: system-ui, -apple-system, "Noto Sans JP", sans-serif;
+  color: #453a32;
+  background: #fff;
+  line-height: 1.7;
+  --wood: #805a3e;
+  --muted: #786a5e;
+  --line: #e7ddd3;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background-color: #fff; }
+.journal-app {
+  color-scheme: only light;
+  color: #453a32;
+  background-color: #fff;
+  min-height: 100vh;
+  border-top: 5px solid #805a3e;
+  font-family: system-ui, -apple-system, "Noto Sans JP", sans-serif;
+  line-height: 1.7;
+  --wood: #805a3e;
+  --muted: #786a5e;
+  --line: #e7ddd3;
+}
+header, main, footer { max-width: 1080px; margin: auto; padding: 32px 24px; }
+header { padding-top: 52px; padding-bottom: 28px; position: relative; }
+header::after { content: ""; display: block; height: 1px; margin-top: 30px; background: linear-gradient(to right, var(--wood) 64px, var(--line) 64px); }
+h1 { font-family: "Yu Mincho", "Hiragino Mincho ProN", serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 600; margin: 0; letter-spacing: .1em; }
+h2 { font-size: 1.15rem; margin: 0 0 20px; font-weight: 600; }
+header p { color: var(--muted); }
+.eyebrow { color: var(--wood); font-size: .75rem; letter-spacing: .25em; font-weight: 700; }
+main { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+.editor, article { background: #fff; padding: 28px; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 5px 20px #63432906; }
+.editor { border-top: 3px solid var(--wood); }
+.editor h2 { padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+label { display: block; font-size: .875rem; margin: 16px 0 6px; font-weight: 600; }
+input, textarea, button { font: inherit; }
+input, textarea { width: 100%; border: 1px solid #b6a28e; border-radius: 6px; padding: 10px 12px; color: inherit; background-color: #fff; }
+input::placeholder, textarea::placeholder { color: #88786b; opacity: 1; }
+textarea {
+  resize: vertical;
+  min-height: 192px;
+  line-height: 32px;
+  padding: 8px 12px;
+  background-image: linear-gradient(to bottom, transparent 31px, var(--line) 31px);
+  background-size: 100% 32px;
+  background-position: 0 8px;
+  background-attachment: local;
+}
+:focus-visible { outline: 3px solid #a87c56; outline-offset: 3px; }
+button { cursor: pointer; border: 1px solid var(--wood); border-radius: 6px; background: var(--wood); color: white; padding: 10px 18px; transition: background-color .15s; }
+button:hover { background: #67452e; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+.secondary { color: var(--wood); background: white; }
+.secondary:hover { background: #f6f0e9; }
+.danger { color: #923d36; border-color: #bd8c80; background: white; }
+.danger:hover { background: #fff2ef; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.note, footer { font-size: .8rem; color: var(--muted); }
+.note { margin-bottom: 0; padding-top: 16px; border-top: 1px solid var(--line); }
+.list-heading { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--line); }
+.list-heading h2 { margin-bottom: 16px; }
+#count, time { font-size: .85rem; color: var(--muted); }
+#count { background: #f5efe8; padding: 2px 10px; border-radius: 20px; }
+article { margin-top: 18px; border-left: 3px solid #b78d67; }
+article h3 { margin: 8px 0; overflow-wrap: anywhere; }
+article p { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 2; padding-top: 12px; border-top: 1px solid var(--line); }
+article .actions { padding-top: 16px; border-top: 1px solid var(--line); }
+#status { min-height: 1.7em; }
+.empty { text-align: center; padding: 40px 12px; color: var(--muted); border-block: 1px dashed var(--line); }
+footer { text-align: center; padding-bottom: 40px; }
+dialog { max-width: min(420px, calc(100% - 32px)); padding: 24px; border: 1px solid #b6a28e; border-radius: 10px; background: #fff; color: #453a32; }
+dialog::backdrop { background: #30251b66; }
+#storage-notice { color: #70431d; background: #fff8ed; padding: 12px; border: 1px solid #d9bc96; border-radius: 6px; }
+@media (max-width: 740px) { main { grid-template-columns: 1fr; gap: 32px; } header { padding-top: 32px; } .editor, article { padding: 20px; } }
+</style>
+</head>
+<body>
+  <div class="journal-app">
+  <header><p class="eyebrow">MY JOURNAL</p><h1>日々のノート</h1><p>今日のできごとを、少しだけ。</p></header>
+  <main>
+    <section class="editor" aria-labelledby="editor-heading">
+      <h2 id="editor-heading">日記を書く</h2>
+      <form id="entry-form">
+        <label for="date">日付</label><input id="date" type="date" required>
+        <label for="title">タイトル</label><input id="title" maxlength="120" placeholder="今日はどんな一日でしたか？" required>
+        <label for="body">本文</label><textarea id="body" rows="10" maxlength="20000" placeholder="思いつくままに書いてみましょう。" required></textarea>
+        <div class="actions"><button id="save" type="button">日記を保存</button><button id="cancel" type="button" class="secondary" hidden>編集をやめる</button></div>
+      </form>
+      <p class="note">日記はこのブラウザに保存されます。別の端末との同期はありません。ブラウザのデータを消すと日記も削除されます。</p>
+      <p id="storage-notice" class="note" role="status" hidden></p>
+    </section>
+    <section aria-labelledby="list-heading">
+      <div class="list-heading"><h2 id="list-heading">これまでの日記</h2><span id="count"></span></div>
+      <label for="search">日記を検索</label><input id="search" type="search" placeholder="タイトルや本文で検索">
+      <p id="status" role="status" aria-live="polite"></p>
+      <div id="entries"></div>
+    </section>
+  </main>
+  <footer>何気ない一日も、大切な記録。</footer>
+  <dialog id="confirmation" aria-labelledby="confirmation-message">
+    <p id="confirmation-message"></p>
+    <div class="actions">
+      <button type="button" data-decision="cancel" class="secondary" autofocus>やめる</button>
+      <button type="button" data-decision="confirm">続ける</button>
+    </div>
+  </dialog>
+  </div>
+<script>
+(() => {
+const STORAGE_KEY = 'nikki.entries.v1';
+
+function loadEntries(storage) {
+  const raw = storage.getItem(STORAGE_KEY);
+  if (raw === null) return [];
+  const entries = JSON.parse(raw);
+  if (!Array.isArray(entries) || entries.some(entry =>
+    !entry || ['id', 'date', 'title', 'body'].some(key => typeof entry[key] !== 'string') ||
+    !/^\d{4}-\d{2}-\d{2}$/.test(entry.date)) ||
+    new Set(entries.map(entry => entry.id)).size !== entries.length) {
+    throw new Error('Invalid diary data');
+  }
+  return entries;
+}
+
+function saveEntries(storage, entries) {
+  storage.setItem(STORAGE_KEY, JSON.stringify(entries));
+}
+
+function findEntries(entries, query = '') {
+  const term = query.trim().toLocaleLowerCase();
+  return entries.filter(entry => `${entry.title}\n${entry.body}`.toLocaleLowerCase().includes(term))
+    .sort((a, b) => b.date.localeCompare(a.date));
+}
+
+
+const form = document.querySelector('#entry-form');
+const date = document.querySelector('#date');
+const title = document.querySelector('#title');
+const body = document.querySelector('#body');
+const cancel = document.querySelector('#cancel');
+const search = document.querySelector('#search');
+const status = document.querySelector('#status');
+const list = document.querySelector('#entries');
+let entries = [];
+let editingId = null;
+let storageAvailable = true;
+let storage;
+
+function confirmAction(message) {
+  const dialog = document.querySelector('#confirmation');
+  document.querySelector('#confirmation-message').textContent = message;
+  dialog.returnValue = 'cancel';
+  return new Promise(resolve => {
+    dialog.addEventListener('close', () => resolve(dialog.returnValue === 'confirm'), { once: true });
+    dialog.showModal();
+  });
+}
+
+function today() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
+
+function resetEditor() {
+  form.reset();
+  date.value = today();
+  editingId = null;
+  cancel.hidden = true;
+  document.querySelector('#editor-heading').textContent = '日記を書く';
+}
+
+function persist(next) {
+  try {
+    saveEntries(storage, next);
+    entries = next;
+    return true;
+  } catch {
+    status.textContent = '保存できませんでした。ブラウザの保存設定や空き容量を確認してください。入力内容は残っています。';
+    return false;
+  }
+}
+
+function render() {
+  list.replaceChildren();
+  document.querySelector('#count').textContent = `${entries.length}件`;
+  const matches = findEntries(entries, search.value);
+  if (!matches.length) {
+    const empty = document.createElement('p');
+    empty.className = 'empty';
+    empty.textContent = entries.length ? '一致する日記はありません。' : '最初の日記を書いてみましょう。';
+    list.append(empty);
+  }
+  for (const entry of matches) {
+    const article = document.createElement('article');
+    const time = document.createElement('time');
+    time.dateTime = entry.date;
+    time.textContent = entry.date.replaceAll('-', '/');
+    const heading = document.createElement('h3');
+    heading.textContent = entry.title;
+    const content = document.createElement('p');
+    content.textContent = entry.body;
+    const actions = document.createElement('div');
+    actions.className = 'actions';
+    const edit = document.createElement('button');
+    edit.type = 'button';
+    edit.className = 'secondary';
+    edit.textContent = '編集';
+    edit.setAttribute('aria-label', `${entry.title}を編集`);
+    edit.addEventListener('click', async () => {
+      if ((editingId !== null || title.value || body.value) && !await confirmAction('入力中の内容を破棄して、この日記を編集しますか？')) return;
+      editingId = entry.id;
+      date.value = entry.date;
+      title.value = entry.title;
+      body.value = entry.body;
+      cancel.hidden = false;
+      document.querySelector('#editor-heading').textContent = '日記を編集';
+      title.focus();
+    });
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'danger';
+    remove.textContent = '削除';
+    remove.setAttribute('aria-label', `${entry.title}を削除`);
+    remove.addEventListener('click', async () => {
+      if (!await confirmAction(`「${entry.title}」を削除しますか？この操作は取り消せません。`)) return;
+      if (!persist(entries.filter(item => item.id !== entry.id))) return;
+      if (editingId === entry.id) resetEditor();
+      render();
+      status.textContent = '日記を削除しました。';
+    });
+    actions.append(edit, remove);
+    article.append(time, heading, content, actions);
+    list.append(article);
+  }
+}
+
+function saveEntry(event) {
+  event.preventDefault();
+  if (!storageAvailable) return;
+  if (!form.reportValidity()) return;
+  if (!title.value.trim() || !body.value.trim()) {
+    status.textContent = 'タイトルと本文を入力してください。';
+    return;
+  }
+  const id = editingId ?? Array.from(crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2, '0')).join('');
+  const entry = { id, date: date.value, title: title.value.trim(), body: body.value.trim() };
+  const next = editingId ? entries.map(item => item.id === editingId ? entry : item) : [...entries, entry];
+  if (!persist(next)) return;
+  resetEditor();
+  render();
+  status.textContent = search.value ? '保存しました。検索条件によっては一覧に表示されません。' : '日記を保存しました。';
+}
+form.addEventListener('submit', saveEntry);
+document.querySelector('#save').addEventListener('click', saveEntry);
+document.querySelectorAll('[data-decision]').forEach(button => {
+  button.addEventListener('click', () => document.querySelector('#confirmation').close(button.dataset.decision));
+});
+cancel.addEventListener('click', async () => {
+  if (await confirmAction('編集をやめて入力内容を破棄しますか？')) resetEditor();
+});
+search.addEventListener('input', render);
+try {
+  storage = window.localStorage;
+  // Reading also detects browsers that expose storage but deny its use.
+  storage.getItem('nikki.entries.v1');
+} catch {
+  const data = new Map();
+  storage = { getItem: key => data.get(key) ?? null, setItem: (key, value) => data.set(key, value) };
+  const notice = document.querySelector('#storage-notice');
+  notice.hidden = false;
+  notice.textContent = '一時保存モード：このプレビューではブラウザへの保存が許可されていません。日記は画面を開いている間だけ保持され、再読み込みすると消えます。';
+}
+try {
+  entries = loadEntries(storage);
+} catch {
+  storageAvailable = false;
+  document.querySelector('#save').disabled = true;
+  status.textContent = '保存済みの日記を読み込めませんでした。既存データの上書きを防ぐため保存を停止しています。ブラウザの保存設定を確認してください。';
+}
+resetEditor();
+render();
+
+})();
+</script>
+</body>
+</html>
