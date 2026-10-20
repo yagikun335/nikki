@@ -1,11 +1,24 @@
 <!doctype html>
+<!-- 画面の構成を編集するテンプレート。変更後は npm run build を実行します。
+     見た目は style.css、操作は app.mjs で指定しています。
+     id はJavaScriptから部品を探す目印なので、変更時は app.mjs 側も合わせてください。 -->
 <html lang="ja">
 <head>
   <meta charset="utf-8">
+  <!-- スマートフォンの画面幅に合わせて表示し、明るい配色を指定します。 -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
+  <!-- title はブラウザのタブに出る名前。画面内の大見出しは下の h1 です。 -->
   <title>日々のノート</title>
+  <!-- ビルド時にCSSとJavaScriptが埋め込まれ、単独の index.html になります。 -->
   <style>
+/* 見た目を変えるためのファイル。編集後は npm run build で index.html に反映します。
+   .名前 は class、#名前 は id を持つ要素に対応します（page.html を参照）。
+   padding は内側の余白、margin は外側の余白、border は枠線です。 */
+
+/* ページ全体の基本設定。only light で自動的なダーク表示への変換を抑えます。
+   --wood: アクセント色、--muted: 補助的な文字色、--line: 罫線の色。
+   var(--wood) のように書くと、指定した色を他の場所でも使えます。 */
 :root {
   color-scheme: only light;
   font-family: system-ui, -apple-system, "Noto Sans JP", sans-serif;
@@ -16,8 +29,12 @@
   --muted: #786a5e;
   --line: #e7ddd3;
 }
+/* 幅の計算に余白・枠線を含め、入力欄などが枠からはみ出しにくくします。 */
 * { box-sizing: border-box; }
 body { margin: 0; background-color: #fff; }
+/* アプリ全体の囲み。埋め込み先に左右されないよう白背景・文字色を再指定。
+   配色を変えるときは :root とここの変数を両方変更してください。
+   一番上の茶色い線は border-top。ここは色コードを直接指定しています。 */
 .journal-app {
   color-scheme: only light;
   color: #453a32;
@@ -30,21 +47,31 @@ body { margin: 0; background-color: #fff; }
   --muted: #786a5e;
   --line: #e7ddd3;
 }
+/* 内容の横幅は最大1080px。margin: auto で中央に配置します。 */
 header, main, footer { max-width: 1080px; margin: auto; padding: 32px 24px; }
 header { padding-top: 52px; padding-bottom: 28px; position: relative; }
+/* ::after はHTMLを増やさず装飾を追加する仕組み。見出しの下に細い横線を描きます。 */
 header::after { content: ""; display: block; height: 1px; margin-top: 30px; background: linear-gradient(to right, var(--wood) 64px, var(--line) 64px); }
+/* 大見出しは明朝体。clamp(最小値, 画面幅に応じた値, 最大値) で文字サイズを調整。 */
 h1 { font-family: "Yu Mincho", "Hiragino Mincho ProN", serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 600; margin: 0; letter-spacing: .1em; }
 h2 { font-size: 1.15rem; margin: 0 0 20px; font-weight: 600; }
 header p { color: var(--muted); }
 .eyebrow { color: var(--wood); font-size: .75rem; letter-spacing: .25em; font-weight: 700; }
+/* PCでは入力欄と一覧を同じ幅の2列に配置。gap は列の間隔です。 */
 main { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+/* 入力エリアと日記カード。border-radius は角の丸み、box-shadow は薄い影。 */
 .editor, article { background: #fff; padding: 28px; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 5px 20px #63432906; }
 .editor { border-top: 3px solid var(--wood); }
 .editor h2 { padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+/* フォームの見出し・入力欄。placeholder は未入力時の案内文字です。 */
 label { display: block; font-size: .875rem; margin: 16px 0 6px; font-weight: 600; }
 input, textarea, button { font: inherit; }
 input, textarea { width: 100%; border: 1px solid #b6a28e; border-radius: 6px; padding: 10px 12px; color: inherit; background-color: #fff; }
 input::placeholder, textarea::placeholder { color: #88786b; opacity: 1; }
+/* 本文欄の罫線は背景画像で描きます。
+   行間と背景の繰り返し幅を32pxで合わせ、各行の下に1pxの線を置きます。
+   間隔を変えるなら line-height / background-size / 31px の値を合わせて調整。
+   resize: vertical で高さだけを利用者が変更できます。 */
 textarea {
   resize: vertical;
   min-height: 192px;
@@ -55,7 +82,10 @@ textarea {
   background-position: 0 8px;
   background-attachment: local;
 }
+/* キーボード操作で選択した場所の目印。操作しやすさのため残してください。 */
 :focus-visible { outline: 3px solid #a87c56; outline-offset: 3px; }
+/* 通常ボタン、マウスを重ねた状態、押せない状態の配色。
+   .secondary は編集・取消、.danger は削除ボタンに使います。 */
 button { cursor: pointer; border: 1px solid var(--wood); border-radius: 6px; background: var(--wood); color: white; padding: 10px 18px; transition: background-color .15s; }
 button:hover { background: #67452e; }
 button:disabled { opacity: .5; cursor: not-allowed; }
@@ -63,52 +93,73 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .secondary:hover { background: #f6f0e9; }
 .danger { color: #923d36; border-color: #bd8c80; background: white; }
 .danger:hover { background: #fff2ef; }
+/* ボタンを横に並べ、狭い画面では折り返します。 */
 .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+/* 注意書きと一覧の見出し・件数表示。文字色は --muted を共有します。 */
 .note, footer { font-size: .8rem; color: var(--muted); }
 .note { margin-bottom: 0; padding-top: 16px; border-top: 1px solid var(--line); }
 .list-heading { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--line); }
 .list-heading h2 { margin-bottom: 16px; }
 #count, time { font-size: .85rem; color: var(--muted); }
 #count { background: #f5efe8; padding: 2px 10px; border-radius: 20px; }
+/* 保存した日記1件の表示。white-space: pre-wrap で本文の改行を残し、
+   overflow-wrap: anywhere で長いURLなども枠内に折り返します。 */
 article { margin-top: 18px; border-left: 3px solid #b78d67; }
 article h3 { margin: 8px 0; overflow-wrap: anywhere; }
 article p { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 2; padding-top: 12px; border-top: 1px solid var(--line); }
 article .actions { padding-top: 16px; border-top: 1px solid var(--line); }
+/* 保存結果の表示と、日記がないときの案内。 */
 #status { min-height: 1.7em; }
 .empty { text-align: center; padding: 40px 12px; color: var(--muted); border-block: 1px dashed var(--line); }
 footer { text-align: center; padding-bottom: 40px; }
+/* 削除などの確認画面。::backdrop は背後を暗くする半透明の幕です。 */
 dialog { max-width: min(420px, calc(100% - 32px)); padding: 24px; border: 1px solid #b6a28e; border-radius: 10px; background: #fff; color: #453a32; }
 dialog::backdrop { background: #30251b66; }
+/* プレビューで一時保存になる場合の注意書き。 */
 #storage-notice { color: #70431d; background: #fff8ed; padding: 12px; border: 1px solid #d9bc96; border-radius: 6px; }
+/* 幅740px以下はスマートフォン向けに1列にし、余白を小さくします。 */
 @media (max-width: 740px) { main { grid-template-columns: 1fr; gap: 32px; } header { padding-top: 32px; } .editor, article { padding: 20px; } }
 </style>
 </head>
 <body>
+  <!-- 全体を白背景の囲みで包み、埋め込み先の黒背景が透けるのを防ぎます。 -->
   <div class="journal-app">
+  <!-- サイト名・ひとこと説明。ここは好きな文章に変更できます。 -->
   <header><p class="eyebrow">MY JOURNAL</p><h1>日々のノート</h1><p>今日のできごとを、少しだけ。</p></header>
   <main>
+    <!-- 左側：日記の入力欄。aria-labelledby は読み上げ時に見出しと領域を結びます。 -->
     <section class="editor" aria-labelledby="editor-heading">
       <h2 id="editor-heading">日記を書く</h2>
       <form id="entry-form">
+        <!-- label の for と入力欄の id を一致させます。
+             required は必須、maxlength は入力できる最大文字数です。 -->
         <label for="date">日付</label><input id="date" type="date" required>
         <label for="title">タイトル</label><input id="title" maxlength="120" placeholder="今日はどんな一日でしたか？" required>
         <label for="body">本文</label><textarea id="body" rows="10" maxlength="20000" placeholder="思いつくままに書いてみましょう。" required></textarea>
+        <!-- プレビューでフォーム送信が禁止されても動くよう、保存はJSで処理。
+             hidden のボタンは編集中にだけ app.mjs が表示します。 -->
         <div class="actions"><button id="save" type="button">日記を保存</button><button id="cancel" type="button" class="secondary" hidden>編集をやめる</button></div>
       </form>
       <p class="note">日記はこのブラウザに保存されます。別の端末との同期はありません。ブラウザのデータを消すと日記も削除されます。</p>
+      <!-- 保存領域が使えない場合だけ、JSが一時保存の注意書きを入れます。 -->
       <p id="storage-notice" class="note" role="status" hidden></p>
     </section>
+    <!-- 右側：検索と日記一覧。スマートフォンでは入力欄の下に表示します。 -->
     <section aria-labelledby="list-heading">
       <div class="list-heading"><h2 id="list-heading">これまでの日記</h2><span id="count"></span></div>
       <label for="search">日記を検索</label><input id="search" type="search" placeholder="タイトルや本文で検索">
+      <!-- 保存などの結果を表示。aria-live は結果を読み上げに伝える指定です。 -->
       <p id="status" role="status" aria-live="polite"></p>
+      <!-- JSが保存済みの日記カードをここに追加するため、最初は空です。 -->
       <div id="entries"></div>
     </section>
   </main>
   <footer>何気ない一日も、大切な記録。</footer>
+  <!-- 削除や入力破棄の確認。JSが showModal() で開き、close() で閉じます。 -->
   <dialog id="confirmation" aria-labelledby="confirmation-message">
     <p id="confirmation-message"></p>
     <div class="actions">
+      <!-- data-decision はJSが確認結果を判定する値。表示文だけなら変更できます。 -->
       <button type="button" data-decision="cancel" class="secondary" autofocus>やめる</button>
       <button type="button" data-decision="confirm">続ける</button>
     </div>
@@ -142,6 +193,9 @@ function findEntries(entries, query = '') {
 }
 
 
+// 操作を担当するファイル。保存データの読み書き・検索処理は storage.mjs を利用します。
+// 編集後は npm run build で配布用の index.html に反映してください。
+// querySelector('#名前') で page.html 内の同じ id の部品を取得します。
 const form = document.querySelector('#entry-form');
 const date = document.querySelector('#date');
 const title = document.querySelector('#title');
@@ -150,26 +204,34 @@ const cancel = document.querySelector('#cancel');
 const search = document.querySelector('#search');
 const status = document.querySelector('#status');
 const list = document.querySelector('#entries');
+// entries: 日記の配列。各日記は { id, date, title, body } を持ちます。
+// editingId: 編集対象のID（null なら新規作成）。storageAvailable: 保存を許可するか。
+// storage: 通常は localStorage、制限付きプレビューではメモリ上の一時保存先です。
 let entries = [];
 let editingId = null;
 let storageAvailable = true;
 let storage;
 
+// ブラウザ標準の confirm に頼らず、HTML内の確認画面を開きます。
+// Promise は選択を待つための仕組み。呼び出し側は await で「続ける」かを受け取ります。
 function confirmAction(message) {
   const dialog = document.querySelector('#confirmation');
   document.querySelector('#confirmation-message').textContent = message;
   dialog.returnValue = 'cancel';
   return new Promise(resolve => {
+    // 一度閉じたらこの処理を解除し、次回開いたときに重複して動くのを防ぎます。
     dialog.addEventListener('close', () => resolve(dialog.returnValue === 'confirm'), { once: true });
     dialog.showModal();
   });
 }
 
+// 利用者の端末の日付を YYYY-MM-DD 形式にします（UTCとの時差で日付がずれるのを回避）。
 function today() {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 }
 
+// 保存後・編集取消後の入力欄を初期化し、新規作成モードに戻します。
 function resetEditor() {
   form.reset();
   date.value = today();
@@ -178,6 +240,7 @@ function resetEditor() {
   document.querySelector('#editor-heading').textContent = '日記を書く';
 }
 
+// 保存成功時だけ画面側のデータも更新。容量不足などで失敗しても入力内容を残します。
 function persist(next) {
   try {
     saveEntries(storage, next);
@@ -189,6 +252,8 @@ function persist(next) {
   }
 }
 
+// 一覧を描き直す処理。検索条件に合う日記を、日付の新しい順に表示します。
+// 一覧の見た目は style.css の article、表示内容はこの関数で変更できます。
 function render() {
   list.replaceChildren();
   document.querySelector('#count').textContent = `${entries.length}件`;
@@ -205,6 +270,7 @@ function render() {
     time.dateTime = entry.date;
     time.textContent = entry.date.replaceAll('-', '/');
     const heading = document.createElement('h3');
+    // textContent で表示すると、日記にHTMLを書いてもプログラムとして実行されません。
     heading.textContent = entry.title;
     const content = document.createElement('p');
     content.textContent = entry.body;
@@ -215,6 +281,7 @@ function render() {
     edit.className = 'secondary';
     edit.textContent = '編集';
     edit.setAttribute('aria-label', `${entry.title}を編集`);
+    // 編集ボタン：入力中の文章があれば破棄を確認し、選んだ日記を入力欄へ戻します。
     edit.addEventListener('click', async () => {
       if ((editingId !== null || title.value || body.value) && !await confirmAction('入力中の内容を破棄して、この日記を編集しますか？')) return;
       editingId = entry.id;
@@ -230,6 +297,7 @@ function render() {
     remove.className = 'danger';
     remove.textContent = '削除';
     remove.setAttribute('aria-label', `${entry.title}を削除`);
+    // 削除ボタン：確認後、対象のIDだけを配列から除いて保存し、一覧を更新します。
     remove.addEventListener('click', async () => {
       if (!await confirmAction(`「${entry.title}」を削除しますか？この操作は取り消せません。`)) return;
       if (!persist(entries.filter(item => item.id !== entry.id))) return;
@@ -243,42 +311,56 @@ function render() {
   }
 }
 
+// 保存操作：入力チェック → 日記データ作成 → 保存 → 入力欄と一覧の更新。
 function saveEntry(event) {
+  // 通常のフォーム送信（ページ移動）はせず、この画面内で処理します。
   event.preventDefault();
   if (!storageAvailable) return;
+  // HTML側の required / maxlength などを検証し、空白だけの文章も次の条件で防ぎます。
   if (!form.reportValidity()) return;
   if (!title.value.trim() || !body.value.trim()) {
     status.textContent = 'タイトルと本文を入力してください。';
     return;
   }
+  // 編集なら既存IDを再利用し、新規ならランダムなIDを発行します。
+  // ?? は左側が null / undefined のときだけ右側を使う記法です。
   const id = editingId ?? Array.from(crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2, '0')).join('');
   const entry = { id, date: date.value, title: title.value.trim(), body: body.value.trim() };
+  // 編集時は対象を置き換え、新規作成時は配列の末尾に追加します。
   const next = editingId ? entries.map(item => item.id === editingId ? entry : item) : [...entries, entry];
   if (!persist(next)) return;
   resetEditor();
   render();
   status.textContent = search.value ? '保存しました。検索条件によっては一覧に表示されません。' : '日記を保存しました。';
 }
+// ここからは操作と処理の結び付け。addEventListener でクリックや入力を検知します。
+// 保存ボタンから直接実行するため、フォーム送信禁止のプレビューでも動きます。
 form.addEventListener('submit', saveEntry);
 document.querySelector('#save').addEventListener('click', saveEntry);
+// 確認画面のボタンが持つ data-decision の値を返して、確認画面を閉じます。
 document.querySelectorAll('[data-decision]').forEach(button => {
   button.addEventListener('click', () => document.querySelector('#confirmation').close(button.dataset.decision));
 });
 cancel.addEventListener('click', async () => {
   if (await confirmAction('編集をやめて入力内容を破棄しますか？')) resetEditor();
 });
+// 検索欄の入力に合わせて一覧を更新します。
 search.addEventListener('input', render);
+// 起動時の保存先の準備。localStorage は同じブラウザ・オリジンにデータを残します。
 try {
   storage = window.localStorage;
-  // Reading also detects browsers that expose storage but deny its use.
+  // 保存領域が存在していても、読み取りを禁止されている場合があるため実際に確認します。
   storage.getItem('nikki.entries.v1');
 } catch {
+  // 禁止されていれば一時保存に切り替えます。Map の中身は再読み込みすると消えます。
   const data = new Map();
   storage = { getItem: key => data.get(key) ?? null, setItem: (key, value) => data.set(key, value) };
   const notice = document.querySelector('#storage-notice');
   notice.hidden = false;
   notice.textContent = '一時保存モード：このプレビューではブラウザへの保存が許可されていません。日記は画面を開いている間だけ保持され、再読み込みすると消えます。';
 }
+// 保存済みデータを読み込みます。壊れたデータを空の配列で上書きしないよう、
+// 読み取り禁止への対処とは分けて、データ不正の場合は保存自体を停止します。
 try {
   entries = loadEntries(storage);
 } catch {
@@ -286,6 +368,7 @@ try {
   document.querySelector('#save').disabled = true;
   status.textContent = '保存済みの日記を読み込めませんでした。既存データの上書きを防ぐため保存を停止しています。ブラウザの保存設定を確認してください。';
 }
+// 最後に入力欄と一覧を初回表示します。
 resetEditor();
 render();
 

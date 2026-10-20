@@ -1,3 +1,10 @@
+/* 見た目を変えるためのファイル。編集後は npm run build で index.html に反映します。
+   .名前 は class、#名前 は id を持つ要素に対応します（page.html を参照）。
+   padding は内側の余白、margin は外側の余白、border は枠線です。 */
+
+/* ページ全体の基本設定。only light で自動的なダーク表示への変換を抑えます。
+   --wood: アクセント色、--muted: 補助的な文字色、--line: 罫線の色。
+   var(--wood) のように書くと、指定した色を他の場所でも使えます。 */
 :root {
   color-scheme: only light;
   font-family: system-ui, -apple-system, "Noto Sans JP", sans-serif;
@@ -8,8 +15,12 @@
   --muted: #786a5e;
   --line: #e7ddd3;
 }
+/* 幅の計算に余白・枠線を含め、入力欄などが枠からはみ出しにくくします。 */
 * { box-sizing: border-box; }
 body { margin: 0; background-color: #fff; }
+/* アプリ全体の囲み。埋め込み先に左右されないよう白背景・文字色を再指定。
+   配色を変えるときは :root とここの変数を両方変更してください。
+   一番上の茶色い線は border-top。ここは色コードを直接指定しています。 */
 .journal-app {
   color-scheme: only light;
   color: #453a32;
@@ -22,21 +33,31 @@ body { margin: 0; background-color: #fff; }
   --muted: #786a5e;
   --line: #e7ddd3;
 }
+/* 内容の横幅は最大1080px。margin: auto で中央に配置します。 */
 header, main, footer { max-width: 1080px; margin: auto; padding: 32px 24px; }
 header { padding-top: 52px; padding-bottom: 28px; position: relative; }
+/* ::after はHTMLを増やさず装飾を追加する仕組み。見出しの下に細い横線を描きます。 */
 header::after { content: ""; display: block; height: 1px; margin-top: 30px; background: linear-gradient(to right, var(--wood) 64px, var(--line) 64px); }
+/* 大見出しは明朝体。clamp(最小値, 画面幅に応じた値, 最大値) で文字サイズを調整。 */
 h1 { font-family: "Yu Mincho", "Hiragino Mincho ProN", serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 600; margin: 0; letter-spacing: .1em; }
 h2 { font-size: 1.15rem; margin: 0 0 20px; font-weight: 600; }
 header p { color: var(--muted); }
 .eyebrow { color: var(--wood); font-size: .75rem; letter-spacing: .25em; font-weight: 700; }
+/* PCでは入力欄と一覧を同じ幅の2列に配置。gap は列の間隔です。 */
 main { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+/* 入力エリアと日記カード。border-radius は角の丸み、box-shadow は薄い影。 */
 .editor, article { background: #fff; padding: 28px; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 5px 20px #63432906; }
 .editor { border-top: 3px solid var(--wood); }
 .editor h2 { padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+/* フォームの見出し・入力欄。placeholder は未入力時の案内文字です。 */
 label { display: block; font-size: .875rem; margin: 16px 0 6px; font-weight: 600; }
 input, textarea, button { font: inherit; }
 input, textarea { width: 100%; border: 1px solid #b6a28e; border-radius: 6px; padding: 10px 12px; color: inherit; background-color: #fff; }
 input::placeholder, textarea::placeholder { color: #88786b; opacity: 1; }
+/* 本文欄の罫線は背景画像で描きます。
+   行間と背景の繰り返し幅を32pxで合わせ、各行の下に1pxの線を置きます。
+   間隔を変えるなら line-height / background-size / 31px の値を合わせて調整。
+   resize: vertical で高さだけを利用者が変更できます。 */
 textarea {
   resize: vertical;
   min-height: 192px;
@@ -47,7 +68,10 @@ textarea {
   background-position: 0 8px;
   background-attachment: local;
 }
+/* キーボード操作で選択した場所の目印。操作しやすさのため残してください。 */
 :focus-visible { outline: 3px solid #a87c56; outline-offset: 3px; }
+/* 通常ボタン、マウスを重ねた状態、押せない状態の配色。
+   .secondary は編集・取消、.danger は削除ボタンに使います。 */
 button { cursor: pointer; border: 1px solid var(--wood); border-radius: 6px; background: var(--wood); color: white; padding: 10px 18px; transition: background-color .15s; }
 button:hover { background: #67452e; }
 button:disabled { opacity: .5; cursor: not-allowed; }
@@ -55,21 +79,29 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .secondary:hover { background: #f6f0e9; }
 .danger { color: #923d36; border-color: #bd8c80; background: white; }
 .danger:hover { background: #fff2ef; }
+/* ボタンを横に並べ、狭い画面では折り返します。 */
 .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+/* 注意書きと一覧の見出し・件数表示。文字色は --muted を共有します。 */
 .note, footer { font-size: .8rem; color: var(--muted); }
 .note { margin-bottom: 0; padding-top: 16px; border-top: 1px solid var(--line); }
 .list-heading { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--line); }
 .list-heading h2 { margin-bottom: 16px; }
 #count, time { font-size: .85rem; color: var(--muted); }
 #count { background: #f5efe8; padding: 2px 10px; border-radius: 20px; }
+/* 保存した日記1件の表示。white-space: pre-wrap で本文の改行を残し、
+   overflow-wrap: anywhere で長いURLなども枠内に折り返します。 */
 article { margin-top: 18px; border-left: 3px solid #b78d67; }
 article h3 { margin: 8px 0; overflow-wrap: anywhere; }
 article p { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 2; padding-top: 12px; border-top: 1px solid var(--line); }
 article .actions { padding-top: 16px; border-top: 1px solid var(--line); }
+/* 保存結果の表示と、日記がないときの案内。 */
 #status { min-height: 1.7em; }
 .empty { text-align: center; padding: 40px 12px; color: var(--muted); border-block: 1px dashed var(--line); }
 footer { text-align: center; padding-bottom: 40px; }
+/* 削除などの確認画面。::backdrop は背後を暗くする半透明の幕です。 */
 dialog { max-width: min(420px, calc(100% - 32px)); padding: 24px; border: 1px solid #b6a28e; border-radius: 10px; background: #fff; color: #453a32; }
 dialog::backdrop { background: #30251b66; }
+/* プレビューで一時保存になる場合の注意書き。 */
 #storage-notice { color: #70431d; background: #fff8ed; padding: 12px; border: 1px solid #d9bc96; border-radius: 6px; }
+/* 幅740px以下はスマートフォン向けに1列にし、余白を小さくします。 */
 @media (max-width: 740px) { main { grid-template-columns: 1fr; gap: 32px; } header { padding-top: 32px; } .editor, article { padding: 20px; } }
